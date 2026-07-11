@@ -1,10 +1,10 @@
-from enums import TipoVulnerabilidade, Severidade, StatusTratamento
 
-class Vulnerabilidades:
 
-    def __init__(self, descricao):
+class Vulnerabilidade:
+
+    def __init__(self, descricao, tipo, severidade, status):
 
         self.descricao = descricao
-        self.tipo = TipoVulnerabilidade
-        self.severidade = Severidade
-        self.status = StatusTratamento
+        self.tipo = tipo
+        self.severidade = severidade
+        self.status = status

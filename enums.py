@@ -8,7 +8,7 @@ class TipoAtivo(IntEnum):
     SOFTWARE_LICENCIADO = 4 
     IMPRESSORA_DE_REDE = 5
 
-class TipoVulnerabilidade:
+class TipoVulnerabilidade(IntEnum):
 
     QUEBRADO = 1
     DESATUALIZADO = 2
