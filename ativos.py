@@ -11,6 +11,23 @@ class Ativo:
         self.tipo = tipo
         self.vulnerabilidades = []
 
+    def to_dict(self):
+
+        return {
+            
+        "id":self.id_ativo, 
+        "nome":self.nome_hostname, 
+        "responsavel":self.responsavel, 
+        "setor":self.setor, 
+        "tipo":self.tipo.name, 
+        "vulnerabilidades": [ 
+            vuln.to_dict()
+            for vuln in self.vulnerabilidades    
+        ]
+        
+        }
+
+
     def listar(self):
         
         print(f""" 

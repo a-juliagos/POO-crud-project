@@ -1,7 +1,7 @@
 from ativos import Ativo
 from vulnerabilidades import Vulnerabilidade
 from enums import TipoAtivo, TipoVulnerabilidade, Severidade, StatusTratamento
-from jason import salvar_dados, carregar_dados
+from salvamento import salvar_dados, carregar_dados
 
 class Sistema:
 
@@ -9,6 +9,12 @@ class Sistema:
         
         self.ativos = []
         self.id_ativo = 1
+
+        self.carregar()
+
+## Funções que se comunicam com o main.py
+## Funções (Métodos) de cadastramento (ativos e vulnerabilidades), busca, listagem e exclusão
+## Funções limpas sem print e input (Boas práticas)
 
 
     def cadastrar_ativo(
@@ -33,9 +39,9 @@ class Sistema:
         
         self.ativos.append(ativo)
         self.id_ativo += 1
-                           
 
-                       
+        self.salvar()
+                                      
         return True, 'Ativo cadastrado com sucesso!!'
         
 
@@ -58,6 +64,8 @@ class Sistema:
         )
 
         ativo.vulnerabilidades.append(vulne)
+
+        self.salvar()
         
         return True, 'Vulnerabilidade cadastrada com sucesso!!'
 
@@ -106,6 +114,7 @@ class Sistema:
         ativo.responsavel = novo_responsavel
         ativo.setor = novo_setor
 
+        self.salvar()
 
         return True, 'Ativo atualizado com sucesso!!'
         
@@ -115,11 +124,64 @@ class Sistema:
         nome = ativo.nome_hostname
         
         self.ativos.remove(ativo)
-        
-        
+
+        self.salvar()
         
         return True, f'O ativo {nome} foi excluído com sucesso!!'
-    
+
+
+## Funções que se comunicam com salvamento.py (json)
+
+
+    def salvar(self):
+        
+        dados = [
+           
+           ativo.to_dict() 
+           for ativo in self.ativos
+
+           ]
+       
+        salvar_dados(dados)
+
+
+    def carregar(self):
+        
+        dados = carregar_dados()
+        self.ativos = []
+
+        for ativo in dados:
+            
+            ativo = Ativo(
+
+            ativo["id"],
+            ativo["nome"],
+            ativo["responsavel"],
+            ativo["setor"],
+            TipoAtivo[ativo["tipo"]]
+        )
+
+        for vuln in ativo.get("vulnerabilidades", []):
+            ativo.vulnerabilidades.append(
+                Vulnerabilidade(
+                    vuln["descricao"],
+                    TipoVulnerabilidade[vuln["tipo"]],
+                    Severidade[vuln["severidade"]],
+                    StatusTratamento[vuln["status"]]
+                )
+            )
+
+        self.ativos.append(ativo)
+
+
+        if self.ativos:
+
+            self.id_ativo = max(
+                
+                ativo.id_ativo 
+                for ativo in self.ativos
+                
+                ) + 1
 
 
 
